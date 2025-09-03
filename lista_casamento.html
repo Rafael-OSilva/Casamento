@@ -15,11 +15,11 @@
             background-color: #f9f7f7;
             color: #333;
             line-height: 1.6;
+            padding: 20px;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         header {
             background: linear-gradient(135deg, #d4af37 0%, #b08d57 100%);
@@ -54,7 +54,8 @@
             font-weight: 600;
         }
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
@@ -88,6 +89,12 @@
         }
         .btn-danger:hover {
             background: #c0392b;
+        }
+        .btn-success {
+            background: #2ecc71;
+        }
+        .btn-success:hover {
+            background: #27ae60;
         }
         .stats {
             display: grid;
@@ -133,16 +140,62 @@
             display: flex;
             justify-content: space-between;
             margin-top: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .export-options {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
         .no-data {
             text-align: center;
             padding: 2rem;
             color: #777;
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 4px solid #d4af37;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        .category-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .category-filter button {
+            background: #6c757d;
+        }
+        .category-filter button.active {
+            background: #d4af37;
+        }
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-noivo {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+        .badge-noiva {
+            background: #fce4ec;
+            color: #880e4f;
+        }
+        .badge-padrinhos {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+        .badge-amigos {
+            background: #fff3e0;
+            color: #e65100;
         }
         @media (max-width: 768px) {
             .stats {
@@ -150,9 +203,11 @@
             }
             .actions {
                 flex-direction: column;
-                gap: 1rem;
             }
             .export-options {
+                flex-direction: column;
+            }
+            .category-filter {
                 flex-direction: column;
             }
             button {
@@ -167,6 +222,14 @@
             <h1>Lista de Convidados</h1>
             <p class="subtitle">Organize sua lista de convidados para o casamento</p>
         </header>
+
+        <div class="instructions">
+            <h3>Como usar:</h3>
+            <p>1. Adicione os convidados usando o formulário abaixo</p>
+            <p>2. Os dados são salvos automaticamente no seu navegador</p>
+            <p>3. Use o botão "Exportar para CSV" para fazer backup dos dados</p>
+            <p>4. Use o botão "Importar de CSV" para restaurar dados de um backup</p>
+        </div>
 
         <div class="stats">
             <div class="stat-card">
@@ -191,13 +254,24 @@
             <h2>Adicionar Convidado</h2>
             <form id="form-convidado">
                 <div class="form-group">
+                    <label for="categoria">Convidado à parte de:</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="familia_noivo">Família do Noivo</option>
+                        <option value="familia_noiva">Família da Noiva</option>
+                        <option value="padrinhos">Padrinhos</option>
+                        <option value="amigos">Amigos</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <label for="nome">Nome do Convidado:</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" required placeholder="Ex: Daniel Ribeiro Dias">
                 </div>
                 
                 <div class="form-group">
                     <label for="acompanhante">Acompanhante Adulto:</label>
-                    <input type="text" id="acompanhante" name="acompanhante" placeholder="Nome do acompanhante (se houver)">
+                    <input type="text" id="acompanhante" name="acompanhante" placeholder="Ex: Luana Ribeiro Souza (deixe em branco se não houver)">
                 </div>
                 
                 <div class="checkbox-group">
@@ -219,12 +293,21 @@
 
         <div class="card">
             <h2>Lista de Convidados</h2>
+            
+            <div class="category-filter">
+                <button type="button" data-category="all" class="active">Todos</button>
+                <button type="button" data-category="familia_noivo">Família Noivo</button>
+                <button type="button" data-category="familia_noiva">Família Noiva</button>
+                <button type="button" data-category="padrinhos">Padrinhos</button>
+                <button type="button" data-category="amigos">Amigos</button>
+            </div>
+            
             <div id="lista-convidados" class="no-data">
                 Nenhum convidado cadastrado ainda.
             </div>
             
             <div class="export-options">
-                <button type="button" id="btn-exportar">Exportar para CSV</button>
+                <button type="button" id="btn-exportar" class="btn-success">Exportar para CSV</button>
                 <button type="button" id="btn-importar">Importar de CSV</button>
                 <input type="file" id="import-file" accept=".csv" style="display: none;">
             </div>
@@ -240,6 +323,26 @@
         const importFile = document.getElementById('import-file');
         const temCriancasCheckbox = document.getElementById('tem_criancas');
         const criancasGroup = document.getElementById('criancas-group');
+        const categoryButtons = document.querySelectorAll('.category-filter button');
+        
+        // Categorias
+        const categorias = {
+            'familia_noivo': 'Família do Noivo',
+            'familia_noiva': 'Família da Noiva',
+            'padrinhos': 'Padrinhos',
+            'amigos': 'Amigos'
+        };
+        
+        // Classes para badges
+        const badgeClasses = {
+            'familia_noivo': 'badge-noivo',
+            'familia_noiva': 'badge-noiva',
+            'padrinhos': 'badge-padrinhos',
+            'amigos': 'badge-amigos'
+        };
+        
+        // Filtro atual
+        let currentFilter = 'all';
         
         // Inicializar dados
         let convidados = JSON.parse(localStorage.getItem('convidados')) || [];
@@ -258,7 +361,7 @@
             convidados.forEach(convidado => {
                 totalAdultos += 1; // O convidado principal
                 if (convidado.acompanhante) totalAdultos += 1; // Acompanhante
-                if (convidado.criancas) totalCriancas += convidado.criancas;
+                if (convidado.criancas) totalCriancas += parseInt(convidado.criancas);
             });
             
             document.getElementById('total-pessoas').textContent = totalAdultos + totalCriancas;
@@ -271,14 +374,23 @@
         function renderizarLista() {
             const listaElement = document.getElementById('lista-convidados');
             
-            if (convidados.length === 0) {
-                listaElement.innerHTML = '<div class="no-data">Nenhum convidado cadastrado ainda.</div>';
+            // Filtrar convidados
+            const convidadosFiltrados = currentFilter === 'all' 
+                ? convidados 
+                : convidados.filter(c => c.categoria === currentFilter);
+            
+            if (convidadosFiltrados.length === 0) {
+                const message = currentFilter === 'all' 
+                    ? 'Nenhum convidado cadastrado ainda.' 
+                    : `Nenhum convidado na categoria "${categorias[currentFilter]}".`;
+                listaElement.innerHTML = `<div class="no-data">${message}</div>`;
                 return;
             }
             
             let html = `
                 <table>
                     <tr>
+                        <th>Categoria</th>
                         <th>Convidado</th>
                         <th>Acompanhante</th>
                         <th>Crianças</th>
@@ -286,14 +398,21 @@
                     </tr>
             `;
             
-            convidados.forEach((convidado, index) => {
+            convidadosFiltrados.forEach((convidado, index) => {
+                // Encontrar índice real no array completo
+                const realIndex = convidados.findIndex(c => 
+                    c.nome === convidado.nome && 
+                    c.categoria === convidado.categoria
+                );
+                
                 html += `
                     <tr>
+                        <td><span class="category-badge ${badgeClasses[convidado.categoria]}">${categorias[convidado.categoria]}</span></td>
                         <td>${convidado.nome}</td>
                         <td>${convidado.acompanhante || '-'}</td>
                         <td>${convidado.criancas || '-'}</td>
                         <td>
-                            <button type="button" class="btn-danger btn-remover" data-index="${index}">Remover</button>
+                            <button type="button" class="btn-danger btn-remover" data-index="${realIndex}">Remover</button>
                         </td>
                     </tr>
                 `;
@@ -312,8 +431,9 @@
         }
         
         // Adicionar convidado
-        function adicionarConvidado(nome, acompanhante, criancas) {
+        function adicionarConvidado(categoria, nome, acompanhante, criancas) {
             convidados.push({
+                categoria,
                 nome,
                 acompanhante: acompanhante || null,
                 criancas: criancas || null
@@ -348,10 +468,10 @@
                 return;
             }
             
-            let csv = 'Convidado,Acompanhante,Crianças\n';
+            let csv = 'Categoria,Convidado,Acompanhante,Crianças\n';
             
             convidados.forEach(convidado => {
-                csv += `"${convidado.nome}","${convidado.acompanhante || ''}","${convidado.criancas || ''}"\n`;
+                csv += `"${categorias[convidado.categoria]}","${convidado.nome}","${convidado.acompanhante || ''}","${convidado.criancas || ''}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -381,13 +501,43 @@
                     const line = lines[i].trim();
                     if (!line) continue;
                     
-                    const values = line.split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                    // Processar CSV considerando aspas
+                    const values = [];
+                    let current = '';
+                    let insideQuotes = false;
                     
-                    if (values.length >= 1 && values[0]) {
+                    for (let char of line) {
+                        if (char === '"') {
+                            insideQuotes = !insideQuotes;
+                        } else if (char === ',' && !insideQuotes) {
+                            values.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    values.push(current.trim());
+                    
+                    if (values.length >= 2 && values[1]) {
+                        // Encontrar a chave da categoria pelo valor
+                        let categoriaKey = '';
+                        for (const [key, value] of Object.entries(categorias)) {
+                            if (value === values[0].replace(/^"|"$/g, '')) {
+                                categoriaKey = key;
+                                break;
+                            }
+                        }
+                        
+                        if (!categoriaKey) {
+                            // Se não encontrou, usar a primeira categoria como padrão
+                            categoriaKey = 'familia_noivo';
+                        }
+                        
                         novosConvidados.push({
-                            nome: values[0],
-                            acompanhante: values[1] || null,
-                            criancas: values[2] ? parseInt(values[2]) || null : null
+                            categoria: categoriaKey,
+                            nome: values[1].replace(/^"|"$/g, ''),
+                            acompanhante: values[2] ? values[2].replace(/^"|"$/g, '') : null,
+                            criancas: values[3] ? values[3].replace(/^"|"$/g, '') : null
                         });
                     }
                 }
@@ -411,21 +561,35 @@
         formConvidado.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const categoria = document.getElementById('categoria').value;
             const nome = document.getElementById('nome').value.trim();
             const acompanhante = document.getElementById('acompanhante').value.trim();
             const temCriancas = document.getElementById('tem_criancas').checked;
             const quantidadeCriancas = temCriancas ? parseInt(document.getElementById('quantidade_criancas').value) : null;
+            
+            if (!categoria) {
+                alert('Por favor, selecione uma categoria.');
+                return;
+            }
             
             if (!nome) {
                 alert('Por favor, informe o nome do convidado.');
                 return;
             }
             
-            adicionarConvidado(nome, acompanhante || null, quantidadeCriancas);
+            if (quantidadeCriancas !== null && (isNaN(quantidadeCriancas) || quantidadeCriancas < 1)) {
+                alert('Por favor, informe uma quantidade válida de crianças.');
+                return;
+            }
             
-            // Limpar formulário
-            this.reset();
+            adicionarConvidado(categoria, nome, acompanhante || null, quantidadeCriancas);
+            
+            // Limpar formulário, mantendo a categoria
+            document.getElementById('nome').value = '';
+            document.getElementById('acompanhante').value = '';
+            document.getElementById('tem_criancas').checked = false;
             criancasGroup.style.display = 'none';
+            document.getElementById('quantidade_criancas').value = '1';
         });
         
         temCriancasCheckbox.addEventListener('change', function() {
@@ -445,6 +609,21 @@
                 importarDeCSV(this.files[0]);
                 this.value = ''; // Resetar o input
             }
+        });
+        
+        // Filtros de categoria
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                
+                // Atualizar botões ativos
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Aplicar filtro
+                currentFilter = category;
+                renderizarLista();
+            });
         });
         
         // Inicializar
