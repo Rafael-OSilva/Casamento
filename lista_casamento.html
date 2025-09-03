@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Convidados - Casamento</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f9f7f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #d4af37 0%, #b08d57 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        button {
+            background: #d4af37;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #b08d57;
+        }
+        .btn-danger {
+            background: #e74c3c;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #777;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .export-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .export-options {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lista de Convidados</h1>
+            <p class="subtitle">Organize sua lista de convidados para o casamento</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-pessoas">0</div>
+                <div class="stat-label">Total de Pessoas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-adultos">0</div>
+                <div class="stat-label">Adultos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-criancas">0</div>
+                <div class="stat-label">Crianças</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-familias">0</div>
+                <div class="stat-label">Famílias Convidadas</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Adicionar Convidado</h2>
+            <form id="form-convidado">
+                <div class="form-group">
+                    <label for="nome">Nome do Convidado:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="acompanhante">Acompanhante Adulto:</label>
+                    <input type="text" id="acompanhante" name="acompanhante" placeholder="Nome do acompanhante (se houver)">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="tem_criancas" name="tem_criancas">
+                    <label for="tem_criancas">Traz crianças?</label>
+                </div>
+                
+                <div class="form-group" id="criancas-group" style="display: none;">
+                    <label for="quantidade_criancas">Quantidade de Crianças:</label>
+                    <input type="number" id="quantidade_criancas" name="quantidade_criancas" min="1" value="1">
+                </div>
+                
+                <div class="actions">
+                    <button type="submit">Adicionar à Lista</button>
+                    <button type="button" id="btn-limpar" class="btn-danger">Limpar Lista</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Lista de Convidados</h2>
+            <div id="lista-convidados" class="no-data">
+                Nenhum convidado cadastrado ainda.
+            </div>
+            
+            <div class="export-options">
+                <button type="button" id="btn-exportar">Exportar para CSV</button>
+                <button type="button" id="btn-importar">Importar de CSV</button>
+                <input type="file" id="import-file" accept=".csv" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const formConvidado = document.getElementById('form-convidado');
+        const btnLimpar = document.getElementById('btn-limpar');
+        const btnExportar = document.getElementById('btn-exportar');
+        const btnImportar = document.getElementById('btn-importar');
+        const importFile = document.getElementById('import-file');
+        const temCriancasCheckbox = document.getElementById('tem_criancas');
+        const criancasGroup = document.getElementById('criancas-group');
+        
+        // Inicializar dados
+        let convidados = JSON.parse(localStorage.getItem('convidados')) || [];
+        
+        // Atualizar estatísticas e lista
+        function atualizarDados() {
+            atualizarEstatisticas();
+            renderizarLista();
+        }
+        
+        // Atualizar estatísticas
+        function atualizarEstatisticas() {
+            let totalAdultos = 0;
+            let totalCriancas = 0;
+            
+            convidados.forEach(convidado => {
+                totalAdultos += 1; // O convidado principal
+                if (convidado.acompanhante) totalAdultos += 1; // Acompanhante
+                if (convidado.criancas) totalCriancas += convidado.criancas;
+            });
+            
+            document.getElementById('total-pessoas').textContent = totalAdultos + totalCriancas;
+            document.getElementById('total-adultos').textContent = totalAdultos;
+            document.getElementById('total-criancas').textContent = totalCriancas;
+            document.getElementById('total-familias').textContent = convidados.length;
+        }
+        
+        // Renderizar lista de convidados
+        function renderizarLista() {
+            const listaElement = document.getElementById('lista-convidados');
+            
+            if (convidados.length === 0) {
+                listaElement.innerHTML = '<div class="no-data">Nenhum convidado cadastrado ainda.</div>';
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <tr>
+                        <th>Convidado</th>
+                        <th>Acompanhante</th>
+                        <th>Crianças</th>
+                        <th>Ações</th>
+                    </tr>
+            `;
+            
+            convidados.forEach((convidado, index) => {
+                html += `
+                    <tr>
+                        <td>${convidado.nome}</td>
+                        <td>${convidado.acompanhante || '-'}</td>
+                        <td>${convidado.criancas || '-'}</td>
+                        <td>
+                            <button type="button" class="btn-danger btn-remover" data-index="${index}">Remover</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</table>';
+            listaElement.innerHTML = html;
+            
+            // Adicionar event listeners aos botões de remover
+            document.querySelectorAll('.btn-remover').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removerConvidado(index);
+                });
+            });
+        }
+        
+        // Adicionar convidado
+        function adicionarConvidado(nome, acompanhante, criancas) {
+            convidados.push({
+                nome,
+                acompanhante: acompanhante || null,
+                criancas: criancas || null
+            });
+            
+            localStorage.setItem('convidados', JSON.stringify(convidados));
+            atualizarDados();
+        }
+        
+        // Remover convidado
+        function removerConvidado(index) {
+            if (confirm('Tem certeza que deseja remover este convidado?')) {
+                convidados.splice(index, 1);
+                localStorage.setItem('convidados', JSON.stringify(convidados));
+                atualizarDados();
+            }
+        }
+        
+        // Limpar lista
+        function limparLista() {
+            if (confirm('Tem certeza que deseja limpar toda a lista? Esta ação não pode ser desfeita.')) {
+                convidados = [];
+                localStorage.removeItem('convidados');
+                atualizarDados();
+            }
+        }
+        
+        // Exportar para CSV
+        function exportarParaCSV() {
+            if (convidados.length === 0) {
+                alert('Não há dados para exportar.');
+                return;
+            }
+            
+            let csv = 'Convidado,Acompanhante,Crianças\n';
+            
+            convidados.forEach(convidado => {
+                csv += `"${convidado.nome}","${convidado.acompanhante || ''}","${convidado.criancas || ''}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'lista_convidados_casamento.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Importar de CSV
+        function importarDeCSV(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n');
+                const novosConvidados = [];
+                
+                // Pular o cabeçalho e processar cada linha
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const values = line.split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                    
+                    if (values.length >= 1 && values[0]) {
+                        novosConvidados.push({
+                            nome: values[0],
+                            acompanhante: values[1] || null,
+                            criancas: values[2] ? parseInt(values[2]) || null : null
+                        });
+                    }
+                }
+                
+                if (novosConvidados.length > 0) {
+                    if (confirm(`Encontrados ${novosConvidados.length} convidados no arquivo. Deseja importar?`)) {
+                        convidados = convidados.concat(novosConvidados);
+                        localStorage.setItem('convidados', JSON.stringify(convidados));
+                        atualizarDados();
+                        alert('Dados importados com sucesso!');
+                    }
+                } else {
+                    alert('Nenhum convidado válido encontrado no arquivo.');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Event Listeners
+        formConvidado.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value.trim();
+            const acompanhante = document.getElementById('acompanhante').value.trim();
+            const temCriancas = document.getElementById('tem_criancas').checked;
+            const quantidadeCriancas = temCriancas ? parseInt(document.getElementById('quantidade_criancas').value) : null;
+            
+            if (!nome) {
+                alert('Por favor, informe o nome do convidado.');
+                return;
+            }
+            
+            adicionarConvidado(nome, acompanhante || null, quantidadeCriancas);
+            
+            // Limpar formulário
+            this.reset();
+            criancasGroup.style.display = 'none';
+        });
+        
+        temCriancasCheckbox.addEventListener('change', function() {
+            criancasGroup.style.display = this.checked ? 'block' : 'none';
+        });
+        
+        btnLimpar.addEventListener('click', limparLista);
+        
+        btnExportar.addEventListener('click', exportarParaCSV);
+        
+        btnImportar.addEventListener('click', function() {
+            importFile.click();
+        });
+        
+        importFile.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                importarDeCSV(this.files[0]);
+                this.value = ''; // Resetar o input
+            }
+        });
+        
+        // Inicializar
+        atualizarDados();
+    </script>
+</body>
+</html>
