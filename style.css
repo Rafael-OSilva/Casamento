@@ -1,0 +1,210 @@
+ * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+  background-color: #f9f7f7;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+header {
+  background: linear-gradient(135deg, #d4af37 0%, #b08d57 100%);
+  color: white;
+  text-align: center;
+  padding: 2rem 0;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+.checkbox-group input {
+  margin-right: 10px;
+}
+button {
+  background: #d4af37;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+button:hover {
+  background: #b08d57;
+}
+.btn-danger {
+  background: #e74c3c;
+}
+.btn-danger:hover {
+  background: #c0392b;
+}
+.btn-success {
+  background: #2ecc71;
+}
+.btn-success:hover {
+  background: #27ae60;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+.stat-label {
+  font-size: 1rem;
+  color: #777;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+th,
+td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+tr:hover {
+  background-color: #f9f9f9;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.export-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: #777;
+}
+.instructions {
+  background-color: #f8f9fa;
+  border-left: 4px solid #d4af37;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+.category-filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.category-filter button {
+  background: #6c757d;
+}
+.category-filter button.active {
+  background: #d4af37;
+}
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+.badge-noivo {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+.badge-noiva {
+  background: #fce4ec;
+  color: #880e4f;
+}
+.badge-padrinhos {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+.badge-amigos {
+  background: #fff3e0;
+  color: #e65100;
+}
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .export-options {
+    flex-direction: column;
+  }
+  .category-filter {
+    flex-direction: column;
+  }
+  button {
+    width: 100%;
+  }
+}
